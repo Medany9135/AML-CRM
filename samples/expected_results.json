@@ -1,0 +1,95 @@
+{
+  "570f28fb349f6d656fec580dfdafb092311fa88662ec8e0b8cb5d60eb36d336b": {
+    "document_type": "Passport",
+    "customer_type": "Individual",
+    "full_name": "Sofia Elena Marquez Duarte",
+    "date_of_birth": "1988-04-12",
+    "nationality": "Spain",
+    "residence_country": "",
+    "id_number": "PXA4471920",
+    "id_expiry": "2025-03-01",
+    "activity": "",
+    "activity_as_written": "Interior designer",
+    "owners": [],
+    "notes": [
+      "Profession 'Interior designer' has no close match in the occupation list.",
+      "Country of residence is not shown on a passport."
+    ]
+  },
+  "7136ff64bee6956b59e19f7501994411cffe01863ad4e61ff9b00a2a5ffcb130": {
+    "document_type": "Trade licence",
+    "customer_type": "Company",
+    "full_name": "Falcon Bay General Trading L.L.C",
+    "date_of_birth": "2021-06-15",
+    "nationality": "United Arab Emirates",
+    "residence_country": "United Arab Emirates",
+    "id_number": "DET-1187342",
+    "id_expiry": "2027-06-14",
+    "activity": "General Trading",
+    "activity_as_written": "General Trading; Electronics & Mobile Phones Trading",
+    "owners": [
+      {
+        "name": "Layla Haddad",
+        "owner_type": "Individual",
+        "nationality": "",
+        "pct": 0,
+        "role": "Senior manager"
+      }
+    ],
+    "notes": [
+      "Licence lists two activities; the first (General Trading) was chosen. Also licensed for electronics and mobile phones trading."
+    ]
+  },
+  "1ae8e4cca9f9f44bd9595ed303a01f3b8a7b95ee6a3b323a6cdf85fe7633f01c": {
+    "document_type": "Memorandum of association",
+    "customer_type": "Company",
+    "full_name": "Falcon Bay General Trading L.L.C",
+    "date_of_birth": "2021-06-10",
+    "nationality": "United Arab Emirates",
+    "residence_country": "United Arab Emirates",
+    "id_number": "",
+    "id_expiry": "",
+    "activity": "General Trading",
+    "activity_as_written": "General trading; electronics and mobile phones trading",
+    "owners": [
+      {
+        "name": "Layla Haddad",
+        "owner_type": "Individual",
+        "nationality": "Jordan",
+        "pct": 40,
+        "role": "Shareholder"
+      },
+      {
+        "name": "Northwind Ventures Limited",
+        "owner_type": "Company",
+        "nationality": "Seychelles",
+        "pct": 35,
+        "role": "Shareholder"
+      },
+      {
+        "name": "Omar Siddiqui",
+        "owner_type": "Individual",
+        "nationality": "India",
+        "pct": 25,
+        "role": "Shareholder"
+      },
+      {
+        "name": "Layla Haddad",
+        "owner_type": "Individual",
+        "nationality": "Jordan",
+        "pct": 0,
+        "role": "Senior manager"
+      },
+      {
+        "name": "Rahul Menon",
+        "owner_type": "Individual",
+        "nationality": "India",
+        "pct": 0,
+        "role": "Director"
+      }
+    ],
+    "notes": [
+      "The date shown is the signing date of the memorandum, not a licence date."
+    ]
+  }
+}

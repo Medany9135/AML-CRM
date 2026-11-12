@@ -22,6 +22,16 @@ See [docs/HOW_IT_WORKS.md](docs/HOW_IT_WORKS.md) for the logic behind every feat
 To start over with fresh dummy data, use **Reset to fresh dummy data** on the Audit Log page,
 or run `python seed.py`.
 
+## Switching on AI document intake
+
+1. Get an API key at console.anthropic.com (set a monthly spend limit there too).
+2. Locally: create `.streamlit/secrets.toml` with the line `ANTHROPIC_API_KEY = "sk-ant-..."`
+   (this file is git-ignored; never commit it).
+   On Streamlit Community Cloud: app menu, Settings, Secrets, paste the same line.
+3. Optional: `AI_DAILY_LIMIT = 25` caps how many documents can be read per day (default 25).
+
+Without a key the page still works with the bundled fictional samples, using saved results.
+
 ## What's in it
 
 | Page | What you can do |
@@ -29,6 +39,7 @@ or run `python seed.py`.
 | Dashboard | Risk and KYC status overview, expired IDs, pending KYC, overdue reviews |
 | Customers | Search and filter, open a profile, edit KYC details, see why the risk rating was given, tick off documents, approve or reject with a rationale, view the audit trail |
 | Add Customer | Onboard an individual or company; risk rating and document checklist are generated |
+| AI Document Intake | Upload a passport, Emirates ID, trade licence or MOA (PDF or photo). AI reads the fields; you review and correct them before saving to a new or existing customer. MOA shareholders and directors can be added to the ownership tree. Saving re-runs the risk score and sanctions screening and is audit-logged. Needs an Anthropic API key (see below); fictional samples in `samples/` work without one |
 | Ownership & UBO | Record shareholders (people or companies, in layers), directors and managers; see the ownership tree, effective percentages, the UBOs (25% rule with senior management fallback) and ownership red flags, which feed the risk score |
 | Sanctions Screening | Download OFAC, UN and EU lists, upload the UAE Local Terrorist List, fuzzy-screen every customer, owner, director and manager, and review alerts (false positive, potential match / PNMR, true match / FFR). A fictional training list is built in |
 | Transaction Monitoring | Upload transactions as CSV (or load the 436-row sample with planted red flags), run 7 tunable rules (large cash, structuring, high risk countries, rapid in/out, profile deviation, round amounts, sanctioned counterparties) and triage alerts |
@@ -50,6 +61,8 @@ or run `python seed.py`.
 | `sanctions.py` | List download, parsing and fuzzy name screening |
 | `tm.py` | Transaction import, monitoring rules, alerts, cases and STR drafts |
 | `make_sample_transactions.py` | Regenerates `data/sample_transactions.csv` |
+| `doc_ai.py` | AI document intake: reads a document with Claude, rule checks (expiry, shareholdings), merges several documents, daily usage cap |
+| `samples/` | Fictional specimen documents for AI intake, their saved results, and the script that makes them |
 | `ubo.py` | UBO calculation and ownership red flags |
 | `governance.py` | Policies, approval workflow, control tests, findings and their demo data |
 | `ewra.py` | Enterprise-wide risk assessment: indicators, scoring rules, residual matrix, actions |

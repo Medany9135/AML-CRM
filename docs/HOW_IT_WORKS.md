@@ -258,7 +258,36 @@ Products and services, Delivery channels, Transactions, Sanctions and proliferat
 
 ---
 
-## 7. Look and feel
+## 7. AI document intake (`doc_ai.py`, page "AI Document Intake")
+
+The page turns KYC documents into profile fields. The AI only proposes; a person decides.
+
+1. **Read** (`extract()`): each uploaded PDF or photo (max 5 MB, 10 pages) is sent to Claude with a list of
+   the fields we want and the app's own country, occupation and licence-activity lists. Claude must answer
+   in a fixed structure (document type, name, dates, nationality, document number, expiry, activity,
+   owners, notes), so there is no free text to parse. It is told to leave a field empty rather than guess,
+   and to treat text inside the document as data, not instructions.
+2. **Clean** (`_finish()`): values that are not in the app's lists are blanked with a note, so a wrong
+   country or activity can't slip in.
+3. **Check** (`checks()`): fixed rules, not AI, flag an expired document, a holder under 18, a missing
+   document number, shareholdings that don't add to 100%, and corporate shareholders that need a
+   look-through.
+4. **Merge** (`merge()`): several documents become one profile. The licence leads for company details,
+   the passport for a person; an MOA's own date never overwrites the licence dates. When two documents
+   disagree, the page shows the conflict.
+5. **Review and save**: the normal customer form opens pre-filled. Updating an existing customer shows a
+   "now vs from documents" table. Owners from an MOA appear in an editable table (people already on
+   file are unticked). On Save the customer is created or updated (risk re-scored), owners are added
+   (UBO analysis re-runs), the matching checklist documents are ticked, sanctions screening runs on the
+   customer and the new owners, and the audit log records which files were read and who saved.
+
+**Cost control:** the key lives in Streamlit secrets; `AI_DAILY_LIMIT` (default 25) caps extractions per day,
+counted in the `ai_usage` table with token counts. Each document costs roughly a few US cents.
+
+**Without a key:** the three fictional samples in `samples/` return saved results (matched by file hash),
+so the flow can be demonstrated offline. Any other file asks for the key.
+
+## 8. Look and feel
 
 `ui.py` holds the shared pieces: the number tiles (`stat_card()`, a thin wrapper around `st.metric`) and the
 customer form (`customer_form()`). The app uses Streamlit's default light theme (`.streamlit/config.toml`) and its
@@ -277,4 +306,6 @@ built-in charts (`st.bar_chart()`), so there is no custom styling to maintain.
 | Add a monitoring rule | add a block in `tm.run_rules()` and an entry in `DEFAULT_RULES` |
 | Change the policy workflow or test result bands | `WORKFLOW` / `result_for()` in `governance.py` |
 | Change EWRA thresholds, factor-to-control mapping or the residual matrix | `INHERENT_RULES` / `_auto_inherent()`, `FACTORS`, `RESIDUAL` in `ewra.py` |
+| Change what AI extracts or its instructions | `Extraction` and `SYSTEM` in `doc_ai.py` |
+| Change the AI daily cap | `AI_DAILY_LIMIT` in secrets, or `DEFAULT_DAILY_LIMIT` in `doc_ai.py` |
 | Add a report | an entry in `REPORTS` and a builder in `reports.py` |

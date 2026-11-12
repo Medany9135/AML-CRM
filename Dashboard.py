@@ -10,6 +10,7 @@ nav = st.navigation({
         st.Page("pages/0_Home.py", title="Dashboard", icon="🏠", default=True),
         st.Page("pages/1_Customers.py", title="Customers", icon="👥"),
         st.Page("pages/2_Add_Customer.py", title="Add Customer", icon="➕"),
+        st.Page("pages/13_AI_Document_Intake.py", title="AI Document Intake", icon="🤖"),
         st.Page("pages/3_Ownership_UBO.py", title="Ownership & UBO", icon="🕸️"),
         st.Page("pages/4_Sanctions_Screening.py", title="Sanctions Screening", icon="🛰️"),
         st.Page("pages/5_Transaction_Monitoring.py", title="Transaction Monitoring", icon="💸"),

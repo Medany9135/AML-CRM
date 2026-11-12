@@ -6,3 +6,5 @@ data/*
 # Python
 __pycache__/
 .venv/
+# Secrets (API keys)
+.streamlit/secrets.toml
