@@ -2,6 +2,7 @@
 
 from datetime import date
 from pathlib import Path
+import re
 import threading
 
 import streamlit as st
@@ -86,6 +87,21 @@ def _load_demo_data():
         case_id = tm.open_case(int(reza.customer_id.iloc[0]), [int(i) for i in reza.id],
                                "Reza Tehrani: possible structuring", "High", "demo")
         tm.update_case(case_id, "Investigating", DEMO_NARRATIVE, "", "demo")
+
+
+_MD_SPECIAL = re.compile(r"([\\`*_{}\[\]()<>#+\-.!|~$:])")
+
+
+def md(text) -> str:
+    """Make text typed into the app (names, notes, descriptions) safe to show inside st.markdown.
+
+    Streamlit already blocks HTML and scripts. This also stops someone's input from turning into a link,
+    an image from another website, LaTeX or bold headings: the text is shown exactly as typed.
+    """
+    if text is None:
+        return ""
+    text = str(text).replace("://", ":\u200b//").replace("www.", "www\u200b.")   # no automatic links
+    return _MD_SPECIAL.sub(r"\\\1", text).replace("\n", " ")
 
 
 def badge(rating: str) -> str:

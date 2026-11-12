@@ -1,5 +1,6 @@
 # Local database and downloaded sanctions lists
 aml_crm.db
+ai_usage.db
 *.backup*.db
 data/*
 !data/sample_transactions.csv

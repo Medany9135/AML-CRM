@@ -9,7 +9,7 @@ import doc_ai
 import sanctions
 from risk import COUNTRIES
 from ubo import ROLES
-from ui import badge, customer_form
+from ui import badge, customer_form, md
 
 
 def render():
@@ -91,7 +91,7 @@ def render():
               "activity_as_written": "As written on the document"}
     for r in results:
         flags = len(r["checks"]) + len(r["notes"])
-        with st.expander(f"📄 {r['file_name']} · {r['document_type']}" + (f" · {flags} point(s) to check" if flags else ""),
+        with st.expander(f"📄 {md(r['file_name'])} · {r['document_type']}" + (f" · {flags} point(s) to check" if flags else ""),
                          expanded=bool(r["checks"])):
             st.caption(r["source"])
             st.table(pd.DataFrame([(LABELS[k], r[k] or "—") for k in LABELS], columns=["Field", "Value"]))
@@ -99,13 +99,13 @@ def render():
                 st.markdown("**People and companies named**")
                 st.dataframe(pd.DataFrame(r["owners"]), hide_index=True, width="stretch")
             for c in r["checks"]:
-                st.warning(c)
+                st.warning(md(c))
             for n in r["notes"]:
-                st.caption(f"AI note: {n}")
+                st.caption(f"AI note: {md(n)}")
 
     merged, conflicts = doc_ai.merge(results)
     for c in conflicts:
-        st.warning(f"Documents disagree. {c}")
+        st.warning(f"Documents disagree. {md(c)}")
 
     # --- 4. Review and save -------------------------------------------------------------------------------
     st.subheader("4. Review and save")
@@ -192,7 +192,7 @@ def render():
                        + f"; reviewed and saved by {user}. Owners added: {len(selected)}.", user)
             hits = sanctions.screen(cid, st.session_state.get("screen_threshold", 85), user)
             saved = db.get_customer(cid)
-            msg = (f"{'Created' if existing is None else 'Updated'} customer #{cid}: {saved['full_name']}, rated "
+            msg = (f"{'Created' if existing is None else 'Updated'} customer #{cid}: {md(saved['full_name'])}, rated "
                    f"{badge(saved['risk_rating'])} (score {saved['risk_score']}).")
             if hits:
                 msg += f" Sanctions screening raised {hits} alert(s): review them before approving."

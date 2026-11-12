@@ -5,7 +5,7 @@ import streamlit as st
 
 import db
 import sanctions
-from ui import NEON, setup, stat_card
+from ui import NEON, md, setup, stat_card
 
 setup("Sanctions screening")
 st.title("Sanctions screening")
@@ -139,19 +139,19 @@ with tab_alerts:
         else:
             o = next((o for o in db.owners_for(int(a.customer_id)) if o["name"] == a.screened_name), {})
             nat, dob = o.get("nationality") or "-", "not recorded"
-        st.markdown(f"**{a.screened_name}** ({a.party})  \nCustomer: {c['full_name']} (#{c['id']})  \n"
-                    f"Nationality / country: {nat}  \nDate of birth: {dob}")
-        st.markdown(f"**Similarity score:** {a.score:g}  \n**Other identifiers:** {a.details or 'none matched'}")
+        st.markdown(f"**{md(a.screened_name)}** ({a.party})  \nCustomer: {md(c['full_name'])} (#{c['id']})  \n"
+                    f"Nationality / country: {md(nat)}  \nDate of birth: {md(dob)}")
+        st.markdown(f"**Similarity score:** {a.score:g}  \n**Other identifiers:** {md(a.details) or 'none matched'}")
     with right:
         st.subheader("Listed party")
         d = sanctions.entry_details(a.list_name, a.entry_id)
         if not d.empty:
             first = d.iloc[0]
-            st.markdown(f"**{a.matched_name}** ({first.entry_type})  \nList: {a.list_name}, entry {a.entry_id}  \n"
-                        f"Programme: {first.program or '-'}  \nNationality: {first.nationality or '-'}  \n"
-                        f"Date of birth: {first.dob or '-'}")
+            st.markdown(f"**{md(a.matched_name)}** ({md(first.entry_type)})  \nList: {a.list_name}, entry {a.entry_id}  \n"
+                        f"Programme: {md(first.program) or '-'}  \nNationality: {md(first.nationality) or '-'}  \n"
+                        f"Date of birth: {md(first.dob) or '-'}")
             if first.remarks:
-                st.caption(first.remarks)
+                st.caption(md(first.remarks))
             if len(d) > 1:
                 st.caption("Also known as: " + "; ".join(d.name.tolist()[:8]))
     with st.form(f"decide_{a.id}"):

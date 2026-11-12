@@ -191,6 +191,34 @@ def build(key: str, start: date, end: date) -> tuple[str, list]:
 
 
 # --- export -----------------------------------------------------------------
+_FORMULA_START = ("=", "+", "-", "@", "\t", "\r")
+
+
+def _safe_cell(v):
+    """Stop text typed into the app (a customer name, a note) from running as a formula in Excel.
+
+    A name like =HYPERLINK("http://bad.site", "Click") would otherwise become a live formula when the
+    report is opened. Text that starts with a formula character gets a leading apostrophe-style quote.
+    Plain numbers and a lone "-" are left alone.
+    """
+    if isinstance(v, str) and len(v) > 1 and v.startswith(_FORMULA_START):
+        try:
+            float(v.replace(",", ""))
+            return v          # a negative number written as text
+        except ValueError:
+            return "'" + v
+    return v
+
+
+def _safe_frame(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+    df.columns = [_safe_cell(str(c)) for c in df.columns]
+    for col in df.columns:
+        if df[col].dtype == object or pd.api.types.is_string_dtype(df[col]):
+            df[col] = df[col].map(_safe_cell)
+    return df
+
+
 def to_excel(title: str, sections: list, period: str, conclusions: str = "") -> bytes:
     buf = io.BytesIO()
     with pd.ExcelWriter(buf, engine="openpyxl") as xw:
@@ -199,7 +227,7 @@ def to_excel(title: str, sections: list, period: str, conclusions: str = "") -> 
         if conclusions:
             cover.append(["MLRO conclusions", conclusions])
         cover += [["Note", text] for head, text in sections if isinstance(text, str)]
-        pd.DataFrame(cover, columns=["Item", "Value"]).to_excel(xw, sheet_name="Summary", index=False)
+        _safe_frame(pd.DataFrame(cover, columns=["Item", "Value"])).to_excel(xw, sheet_name="Summary", index=False)
         used = set()
         for head, body in sections:
             if isinstance(body, pd.DataFrame):
@@ -207,7 +235,7 @@ def to_excel(title: str, sections: list, period: str, conclusions: str = "") -> 
                 while name in used:
                     name = name[:29] + str(len(used))
                 used.add(name)
-                body.to_excel(xw, sheet_name=name, index=False)
+                _safe_frame(body).to_excel(xw, sheet_name=name, index=False)
     return buf.getvalue()
 
 

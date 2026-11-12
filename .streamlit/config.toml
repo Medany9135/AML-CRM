@@ -1,2 +1,16 @@
 [theme]
 base = "light"
+
+[server]
+# Largest file anyone can upload (MB). Sanctions lists and transaction CSVs are well under this.
+maxUploadSize = 25
+# Both are Streamlit defaults, written here so nobody switches them off by accident.
+enableXsrfProtection = true
+enableCORS = true
+
+[client]
+# Visitors see a short error message, never the code and file paths behind it.
+showErrorDetails = "none"
+
+[browser]
+gatherUsageStats = false

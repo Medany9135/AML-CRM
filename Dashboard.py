@@ -24,4 +24,8 @@ nav = st.navigation({
         st.Page("pages/7_Audit_Log.py", title="Audit Log", icon="📜"),
     ],
 }, expanded=True)   # show every page; by default Streamlit folds long menus behind "View more"
-nav.run()
+try:
+    nav.run()
+except ValueError as e:
+    # Raised by the server-side checks in db.py when a save is refused. Show the reason in plain words.
+    st.error(f"Not saved: {e}")

@@ -10,7 +10,7 @@ import streamlit as st
 import db
 import sanctions
 from ubo import analyse
-from ui import badge, customer_form, setup
+from ui import badge, customer_form, md, setup
 
 setup("Customers")
 st.title("Customers")
@@ -59,7 +59,7 @@ user = st.session_state["user"]
 st.divider()
 h1, h2, h3 = st.columns([3, 1, 1])
 h1.header(c["full_name"])
-h1.caption(f"{c['customer_type']} · {c['activity']} · customer #{cid} since {c['created_at']}")
+h1.caption(f"{c['customer_type']} · {md(c['activity'])} · customer #{cid} since {c['created_at']}")
 h2.markdown(f"**Risk rating**\n\n### {badge(c['risk_rating'])}\nscore {c['risk_score']}")
 h3.markdown(f"**KYC status**\n\n### {c['kyc_status']}\nreview by {c['next_review']}")
 
@@ -89,9 +89,9 @@ with tab_owners:
         st.info("Ownership applies to company customers. For an individual, the customer is the beneficial owner.")
     else:
         a = analyse(db.owners_for(cid))
-        st.markdown(f"**Basis:** {a['basis']}")
+        st.markdown(f"**Basis:** {md(a['basis'])}")
         for p in a["ubos"]:
-            st.markdown(f"- **{p['name']}** ({p['nationality']}), {p['effective_pct']:g}% effective"
+            st.markdown(f"- **{md(p['name'])}** ({md(p['nationality'])}), {p['effective_pct']:g}% effective"
                         + (", **PEP**" if p["pep"] else ""))
         if not a["ubos"]:
             st.warning("No beneficial owner identified yet.")
@@ -108,7 +108,7 @@ with tab_risk:
     st.markdown(f"**Score {c['risk_score']} → {badge(c['risk_rating'])}**  "
                 "(0-24 Low, 25-49 Medium, 50+ High; PEP or FATF black list forces High)")
     for reason in json.loads(c["risk_reasons"]):
-        st.markdown(f"- {reason}")
+        st.markdown(f"- {md(reason)}")
     st.caption("Rules live in risk.py. Change them there and every customer is rescored when edited.")
 
 with tab_docs:

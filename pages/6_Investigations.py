@@ -4,7 +4,7 @@ import streamlit as st
 
 import db
 import tm
-from ui import NEON, setup, stat_card
+from ui import NEON, md, setup, stat_card
 
 setup("Investigations")
 st.title("Investigations")
@@ -38,14 +38,14 @@ c = db.get_customer(int(k.customer_id))
 
 st.divider()
 st.header(f"Investigation #{case_id}: {k.title}")
-st.markdown(f"**Customer:** {c['full_name']} ({c['customer_type']}, {c['activity']}) · **risk** {c['risk_rating']} · "
+st.markdown(f"**Customer:** {md(c['full_name'])} ({c['customer_type']}, {md(c['activity'])}) · **risk** {c['risk_rating']} · "
             f"**priority** {k.priority} · **status** {k.status}")
 
 left, right = st.columns([1.2, 1])
 with left:
     st.subheader("Alerts in this investigation")
     for a in tm.case_alerts(case_id).itertuples():
-        st.markdown(f"- **[{a.severity}] {a.rule}**: {a.description}")
+        st.markdown(f"- **[{a.severity}] {a.rule}**: {md(a.description)}")
     st.subheader("All transactions for this customer")
     t = tm.transactions_df(int(k.customer_id))
     st.dataframe(t[["ts", "txn_id", "direction", "channel", "amount_aed", "counterparty", "counterparty_country",
@@ -53,7 +53,7 @@ with left:
                  hide_index=True, width="stretch", height=280,
                  column_config={"amount_aed": st.column_config.NumberColumn("AED", format="%.0f")})
     with st.expander("KYC snapshot"):
-        st.markdown(f"Nationality / incorporation: {c['nationality']}  \nSource of funds: {c['source_of_funds']}  \n"
+        st.markdown(f"Nationality / incorporation: {md(c['nationality'])}  \nSource of funds: {md(c['source_of_funds'])}  \n"
                     f"Expected monthly volume: AED {c['expected_monthly_volume']:,.0f}  \nPEP: "
                     f"{'Yes' if c['pep'] else 'No'}  \nKYC status: {c['kyc_status']}")
 
