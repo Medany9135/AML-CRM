@@ -7,7 +7,7 @@ import db
 import sanctions
 from risk import COUNTRIES
 from ubo import OFFSHORE, ROLES, UBO_THRESHOLD, analyse, risk_factors
-from ui import NEON, badge, setup, stat_card
+from ui import NEON, badge, md, setup, stat_card
 
 setup("Ownership & UBO")
 st.title("Ownership & UBO")
@@ -110,7 +110,7 @@ with left:
 
 with right:
     st.subheader("Beneficial owners")
-    st.markdown(f"**Basis:** {a['basis']}")
+    st.markdown(f"**Basis:** {md(a['basis'])}")
     if a["people"]:
         table = pd.DataFrame([{
             "UBO": "✔" if p["is_ubo"] else "", "Name": p["name"] + (" (PEP)" if p["pep"] else ""),

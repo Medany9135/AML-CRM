@@ -3,7 +3,7 @@
 import streamlit as st
 
 import governance as gov
-from ui import setup, stat_card
+from ui import md, setup, stat_card
 
 setup("Policy management")
 st.title("Policy management")
@@ -62,8 +62,8 @@ status = gov.policy_status(p["stage"], p["next_review"])
 st.divider()
 left, right = st.columns(2)
 with left:
-    st.subheader(f"{p['name']} · {p['version']}")
-    st.markdown(f"**Status:** {STATUS_ICON[status]} · **Owner:** {p['owner']} · **Approved by:** {p['approver']}")
+    st.subheader(f"{md(p['name'])} · {md(p['version'])}")
+    st.markdown(f"**Status:** {STATUS_ICON[status]} · **Owner:** {md(p['owner'])} · **Approved by:** {md(p['approver'])}")
     st.markdown("**Approval workflow**")
     steps = []
     for i, step in enumerate(gov.WORKFLOW):

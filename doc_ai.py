@@ -14,13 +14,14 @@ import hashlib
 import io
 import json
 import os
+import sqlite3
+from contextlib import contextmanager
 from datetime import date, datetime
 from pathlib import Path
 from typing import Literal
 
 from pydantic import BaseModel, Field
 
-import db
 from risk import ACTIVITIES, COUNTRIES
 from ubo import ROLES
 from uae_activities import ACTIVITY_LIST
@@ -130,15 +131,30 @@ def daily_limit() -> int:
         return DEFAULT_DAILY_LIMIT
 
 
+# The usage counter lives in its own file, separate from the main database, so that "Reset to fresh
+# dummy data" (which deletes the main database) cannot also wipe the count and lift the daily cap.
+USAGE_DB = Path(__file__).with_name("ai_usage.db")
+
+
+@contextmanager
+def _usage_conn():
+    conn = sqlite3.connect(USAGE_DB)
+    try:
+        yield conn
+        conn.commit()
+    finally:
+        conn.close()
+
+
 def used_today() -> int:
-    with db.connect() as conn:
+    with _usage_conn() as conn:
         conn.executescript(USAGE_SCHEMA)
         return conn.execute("SELECT COUNT(*) FROM ai_usage WHERE source='api' AND ts >= ?",
                             (date.today().isoformat(),)).fetchone()[0]
 
 
 def _record_usage(user: str, file_name: str, source: str, usage=None):
-    with db.connect() as conn:
+    with _usage_conn() as conn:
         conn.executescript(USAGE_SCHEMA)
         conn.execute("INSERT INTO ai_usage (ts, user, file_name, source, input_tokens, output_tokens) "
                      "VALUES (?,?,?,?,?,?)",

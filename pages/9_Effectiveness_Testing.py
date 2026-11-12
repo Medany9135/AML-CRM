@@ -5,7 +5,7 @@ from datetime import date
 import streamlit as st
 
 import governance as gov
-from ui import setup, stat_card
+from ui import md, setup, stat_card
 
 setup("Effectiveness testing")
 st.title("Effectiveness testing")
@@ -53,13 +53,13 @@ with tab_tests:
         labels = {f"{r.tested_on} · {r.area} · {r.result}": int(r.id) for r in tests.itertuples()}
         tid = labels[st.selectbox("Open a test", list(labels))]
         t = tests[tests.id == tid].iloc[0]
-        st.markdown(f"#### {t.area}: {t.what}")
-        st.markdown(f"{RESULT_ICON[t.result]} · tested {t.tested_on} by {t.tester} · {t.frequency}")
+        st.markdown(f"#### {md(t.area)}: {md(t.what)}")
+        st.markdown(f"{RESULT_ICON[t.result]} · tested {md(t.tested_on)} by {md(t.tester)} · {md(t.frequency)}")
         rate = t["passed"] / t["sample"] if t["sample"] else 1
         st.progress(rate, text=f"{t['passed']} of {t['sample']} passed ({rate:.0%})")
         c1, c2 = st.columns(2)
-        c1.markdown(f"**Method:** {t.method}  \n**What failed:** {t.notes or 'Nothing'}")
-        c2.markdown(f"**Evidence kept:** {t.evidence or '-'}")
+        c1.markdown(f"**Method:** {md(t.method)}  \n**What failed:** {md(t.notes) or 'Nothing'}")
+        c2.markdown(f"**Evidence kept:** {md(t.evidence) or '-'}")
         linked = findings[findings.test_id == tid]
         if not linked.empty:
             st.markdown("**Findings from this test:** " + "; ".join(f"{r.finding} ({r.status})"

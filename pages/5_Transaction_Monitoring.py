@@ -9,7 +9,7 @@ import streamlit as st
 
 import db
 import tm
-from ui import NEON, setup, stat_card
+from ui import NEON, md, setup, stat_card
 
 setup("Transaction monitoring")
 st.title("Transaction monitoring")
@@ -143,7 +143,7 @@ with tab_alerts:
             mine = open_alerts[open_alerts.customer == cust]
             cid = int(mine.customer_id.iloc[0])
             c = db.get_customer(cid)
-            st.markdown(f"**{cust}** · {c['customer_type']} · {c['activity']} · risk {c['risk_rating']} · "
+            st.markdown(f"**{md(cust)}** · {c['customer_type']} · {md(c['activity'])} · risk {c['risk_rating']} · "
                         f"expected AED {c['expected_monthly_volume']:,.0f} per month")
             picked = []
             for a in mine.itertuples():
@@ -151,7 +151,7 @@ with tab_alerts:
                     top = st.columns([0.08, 0.92])
                     if top[0].checkbox("Include", key=f"pick_{a.id}", value=True, label_visibility="collapsed"):
                         picked.append(a.id)
-                    top[1].markdown(f"**[{a.severity}] {a.rule}**: {a.description}")
+                    top[1].markdown(f"**[{a.severity}] {a.rule}**: {md(a.description)}")
                     with top[1].expander("Transactions"):
                         t = tm.alert_transactions(mine[mine.id == a.id].iloc[0])
                         st.dataframe(t[["ts", "txn_id", "direction", "channel", "amount_aed", "counterparty",

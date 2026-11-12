@@ -7,7 +7,7 @@ import streamlit as st
 import ai_intake
 import db
 import sanctions
-from ui import badge, customer_form, setup
+from ui import badge, customer_form, md, setup
 
 setup("Add customer")
 st.title("Onboard a customer")
@@ -30,9 +30,9 @@ if new:
         st.error(f"Sanctions screening raised {hits} alert(s) for this customer. Review them on the "
                  "Sanctions Screening page before approving.")
     saved = db.get_customer(cid)   # the stored rating also includes ownership and screening factors
-    st.success(f"Created customer #{cid}: {saved['full_name']} rated {badge(saved['risk_rating'])} "
+    st.success(f"Created customer #{cid}: {md(saved['full_name'])} rated {badge(saved['risk_rating'])} "
                f"(score {saved['risk_score']}).")
     for r in json.loads(saved["risk_reasons"]):
-        st.markdown(f"- {r}")
+        st.markdown(f"- {md(r)}")
     st.session_state["open_customer"] = cid
     st.page_link("pages/1_Customers.py", label="Open the customer profile", icon="👥")
